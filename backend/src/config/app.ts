@@ -1,23 +1,34 @@
 import config from "./index";
 
+const corsOrigins: string[] = [
+  config.urls.frontend,
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
+const corsMethods: string[] = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
+const corsAllowedHeaders: string[] = [
+  "Content-Type",
+  "Authorization",
+  "X-Requested-With",
+  "Accept",
+];
+const corsExposedHeaders: string[] = ["Content-Range", "X-Content-Range"];
+
 const appConfig = {
-  // API version prefix
   apiPrefix: "/api/v1",
 
-  // CORS configuration
   cors: {
-    origin: [config.urls.frontend, "http://localhost:5173", "http://localhost:3000"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-    exposedHeaders: ["Content-Range", "X-Content-Range"],
+    origin: corsOrigins,
+    credentials: true as const,
+    methods: corsMethods,
+    allowedHeaders: corsAllowedHeaders,
+    exposedHeaders: corsExposedHeaders,
     maxAge: 86400,
   },
 
-  // Request body limits
   bodyLimit: "10mb",
 
-  // Pagination defaults
   pagination: {
     defaultPage: 1,
     defaultLimit: 20,
@@ -26,7 +37,6 @@ const appConfig = {
     sortOrder: "desc" as "asc" | "desc",
   },
 
-  // Application statuses
   applicationStatuses: [
     "pending",
     "under_review",
@@ -36,7 +46,6 @@ const appConfig = {
     "completed",
   ] as const,
 
-  // Service categories
   serviceCategories: [
     "civil_registration",
     "land_administration",
@@ -51,7 +60,6 @@ const appConfig = {
     "other",
   ] as const,
 
-  // Document types
   documentTypes: [
     "birth_certificate",
     "death_certificate",
@@ -67,7 +75,6 @@ const appConfig = {
     "other",
   ] as const,
 
-  // Ethiopian regions (for address forms)
   regions: [
     "Addis Ababa",
     "Afar",
@@ -85,7 +92,6 @@ const appConfig = {
     "Central Ethiopia",
   ],
 
-  // Woreda specific
   woreda: {
     name: "Dangila",
     region: "Amhara",

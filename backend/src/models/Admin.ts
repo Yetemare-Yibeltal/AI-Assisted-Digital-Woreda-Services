@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import config from "../config/index";
 
 export interface IAdminPermissions {
@@ -33,6 +33,7 @@ export interface IAdmin extends Document {
   passwordResetExpires: Date | null;
   createdBy: mongoose.Types.ObjectId | null;
   profileImage: string;
+  isLocked: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -180,7 +181,7 @@ AdminSchema.index({ role: 1 });
 AdminSchema.index({ department: 1, isActive: 1 });
 
 // Virtual: check if account is locked
-AdminSchema.virtual("isLocked").get(function () {
+AdminSchema.virtual("isLocked").get(function (this: IAdmin) {
   if (!this.lockUntil) return false;
   return this.lockUntil > new Date();
 });
@@ -203,6 +204,9 @@ AdminSchema.methods.comparePassword = async function (candidatePassword: string)
 
 // Generate access token
 AdminSchema.methods.generateAuthToken = function (): string {
+  const signOptions: SignOptions = {
+    expiresIn: config.jwt.expiresIn,
+  };
   return jwt.sign(
     {
       id: this._id,
@@ -211,15 +215,16 @@ AdminSchema.methods.generateAuthToken = function (): string {
       fullName: this.fullName,
     },
     config.jwt.secret,
-    { expiresIn: config.jwt.expiresIn }
+    signOptions
   );
 };
 
 // Generate refresh token
 AdminSchema.methods.generateRefreshToken = function (): string {
-  return jwt.sign({ id: this._id }, config.jwt.secret, {
+  const signOptions: SignOptions = {
     expiresIn: config.jwt.refreshExpiresIn,
-  });
+  };
+  return jwt.sign({ id: this._id }, config.jwt.secret, signOptions);
 };
 
 // Check specific permission
@@ -255,4 +260,3 @@ AdminSchema.statics.findByCredentials = async function (
 const Admin = mongoose.model<IAdmin, IAdminModel>("Admin", AdminSchema);
 
 export default Admin;
-export { IAdminPermissions };
