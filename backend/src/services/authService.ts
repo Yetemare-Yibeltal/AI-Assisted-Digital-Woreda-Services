@@ -5,7 +5,6 @@ import config from "../config/index";
 import { AuthenticationError } from "../errors/AuthenticationError";
 import { AppError } from "../errors/AppError";
 import { generateResetToken } from "../utils/encryption";
-import { sendSuccess } from "../utils/responseFormatter";
 
 interface TokenPair {
   accessToken: string;
@@ -111,7 +110,6 @@ const forgotPassword = async (email: string): Promise<void> => {
   admin.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
   await admin.save({ validateBeforeSave: false });
 
-  // In production, send email here with the reset token
   console.log(`Password reset token for ${email}: ${token}`);
   console.log(`Reset URL: ${config.urls.frontend}/admin/reset-password?token=${token}`);
 };
@@ -204,4 +202,3 @@ export default {
   getCurrentAdmin,
   generateTokenPair,
 };
-kk
