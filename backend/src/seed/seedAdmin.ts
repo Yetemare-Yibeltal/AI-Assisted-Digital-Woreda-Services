@@ -130,7 +130,6 @@ const seedAdmins = async () => {
     await connectDB();
     console.log("Connected to MongoDB");
 
-    // Only delete existing non-super-admin accounts or create if none exist
     const existingAdmin = await Admin.findOne({ email: "admin@dangila.gov.et" });
 
     if (existingAdmin) {
