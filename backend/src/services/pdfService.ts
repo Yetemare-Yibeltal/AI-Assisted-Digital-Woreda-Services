@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import { IApplication } from "../models/Application";
 import { IService } from "../models/Service";
-import config from "../config/index";
 import logger from "../utils/logger";
 
 interface PDFGenerationOptions {
@@ -23,7 +22,6 @@ const createPDFDocument = (options: PDFGenerationOptions): PDFKit.PDFDocument =>
       Subject: "Official Document",
     },
   });
-
   return doc;
 };
 
@@ -39,7 +37,6 @@ const addHeader = (doc: PDFKit.PDFDocument, language: "en" | "am"): void => {
   doc.fontSize(12).text(headerText, { align: "center" });
   doc.fontSize(10).text(subHeaderText, { align: "center" });
   doc.moveDown(0.5);
-
   doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#1a5632");
   doc.moveDown(1);
 };
@@ -48,12 +45,13 @@ const addFooter = (doc: PDFKit.PDFDocument): void => {
   const bottomY = doc.page.height - 50;
   doc.moveTo(50, bottomY).lineTo(545, bottomY).stroke("#cccccc");
   doc
+    .fillColor("#666666")
     .fontSize(8)
     .text(
       `Generated on ${new Date().toLocaleString()} | Dangila Woreda Digital Services`,
       50,
       bottomY + 10,
-      { align: "center", color: "#666666" }
+      { align: "center" }
     );
 };
 
@@ -120,10 +118,8 @@ const generateApplicationReceipt = async (
     doc
       .fontSize(10)
       .font("Helvetica-Bold")
-      .text(detail.label + ":", startX, currentY, { width: labelWidth, continued: false });
-
+      .text(detail.label + ":", startX, currentY, { width: labelWidth });
     doc.font("Helvetica").text(detail.value, startX + labelWidth, currentY, { width: valueWidth });
-
     currentY = doc.y + 5;
   });
 
@@ -156,7 +152,7 @@ const generateApplicationReceipt = async (
       ? "ይህ ደረሰኝ ማመልከቻዎ መቀበሉን የሚያረጋግጥ ነው። ለወደፊት ማጣቀሻ ይዘውት ይቆዩ።"
       : "This receipt confirms your application has been received. Please keep it for future reference.";
 
-  doc.fontSize(9).text(notice, { align: "center", color: "#666666" });
+  doc.fillColor("#666666").fontSize(9).text(notice, { align: "center" });
 
   addFooter(doc);
   doc.end();
@@ -182,7 +178,8 @@ const generateApprovalCertificate = async (
 
   const title = options.language === "am" ? "የማጽደቅ ሰርተፍኬት" : "Certificate of Approval";
 
-  doc.fontSize(18).text(title, { align: "center", color: "#1a5632" });
+  doc.fillColor("#1a5632").fontSize(18).text(title, { align: "center" });
+  doc.fillColor("#000000");
   doc.moveDown(2);
 
   const bodyText =
@@ -200,10 +197,12 @@ const generateApprovalCertificate = async (
 
   if (options.includeStamp) {
     doc
+      .fillColor("#cc0000")
       .fontSize(14)
       .font("Helvetica-Bold")
-      .text("OFFICIAL STAMP", { align: "right", color: "#cc0000" });
-    doc.fontSize(8).font("Helvetica").text("Dangila Woreda", { align: "right", color: "#cc0000" });
+      .text("OFFICIAL STAMP", { align: "right" });
+    doc.fontSize(8).font("Helvetica").text("Dangila Woreda", { align: "right" });
+    doc.fillColor("#000000");
   }
 
   addFooter(doc);
