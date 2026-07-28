@@ -1,66 +1,148 @@
-export const storage = {
-  get: <T>(key: string, defaultValue?: T): T | null => {
+const PREFIX = "dangila_";
+
+const storage = {
+  get<T>(key: string, defaultValue?: T): T | null {
     try {
-      const item = localStorage.getItem(key);
-      if (item === null) return defaultValue ?? null;
-      return JSON.parse(item) as T;
-    } catch {
-      const item = localStorage.getItem(key);
-      return (item as unknown as T) ?? defaultValue ?? null;
+      const item = localStorage.getItem(PREFIX + key);
+      if (item === null || item === "undefined") return defaultValue ?? null;
+      try {
+        return JSON.parse(item) as T;
+      } catch {
+        return item as unknown as T;
+      }
+    } catch (error) {
+      console.error(`Storage get error for key "${key}":`, error);
+      return defaultValue ?? null;
     }
   },
 
-  set: (key: string, value: unknown): void => {
+  set(key: string, value: unknown): void {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      localStorage.setItem(key, String(value));
+      const serialized =
+        typeof value === "string" ? value : JSON.stringify(value);
+      localStorage.setItem(PREFIX + key, serialized);
+    } catch (error) {
+      if (
+        error instanceof DOMException &&
+        error.name === "QuotaExceededError"
+      ) {
+        console.error("LocalStorage quota exceeded. Clearing old data...");
+        this.clearAll();
+        try {
+          localStorage.setItem(PREFIX + key, JSON.stringify(value));
+        } catch {
+          console.error("Storage still full after cleanup");
+        }
+      } else {
+        console.error(`Storage set error for key "${key}":`, error);
+      }
     }
   },
 
-  remove: (key: string): void => {
-    localStorage.removeItem(key);
+  remove(key: string): void {
+    try {
+      localStorage.removeItem(PREFIX + key);
+    } catch (error) {
+      console.error(`Storage remove error for key "${key}":`, error);
+    }
   },
 
-  clear: (): void => {
-    localStorage.clear();
+  has(key: string): boolean {
+    return localStorage.getItem(PREFIX + key) !== null;
   },
 
-  getAccessToken: (): string | null => {
-    return localStorage.getItem("accessToken");
+  clearAll(): void {
+    const keysToKeep = ["language"];
+    const allKeys = Object.keys(localStorage).filter((k) =>
+      k.startsWith(PREFIX),
+    );
+    allKeys.forEach((key) => {
+      const shortKey = key.replace(PREFIX, "");
+      if (!keysToKeep.includes(shortKey)) {
+        localStorage.removeItem(key);
+      }
+    });
   },
 
-  setAccessToken: (token: string): void => {
-    localStorage.setItem("accessToken", token);
+  clearAuth(): void {
+    this.remove("accessToken");
+    this.remove("refreshToken");
+    this.remove("user");
+    this.remove("permissions");
   },
 
-  getRefreshToken: (): string | null => {
-    return localStorage.getItem("refreshToken");
+  getAccessToken(): string | null {
+    return localStorage.getItem(PREFIX + "accessToken");
   },
 
-  setRefreshToken: (token: string): void => {
-    localStorage.setItem("refreshToken", token);
+  setAccessToken(token: string): void {
+    if (!token) {
+      this.remove("accessToken");
+      return;
+    }
+    localStorage.setItem(PREFIX + "accessToken", token);
   },
 
-  getUser: <T>(): T | null => {
-    return storage.get<T>("user");
+  getRefreshToken(): string | null {
+    return localStorage.getItem(PREFIX + "refreshToken");
   },
 
-  setUser: (user: unknown): void => {
-    storage.set("user", user);
+  setRefreshToken(token: string): void {
+    if (!token) {
+      this.remove("refreshToken");
+      return;
+    }
+    localStorage.setItem(PREFIX + "refreshToken", token);
   },
 
-  getLanguage: (): "en" | "am" => {
-    return (localStorage.getItem("language") as "en" | "am") || "en";
+  getUser<T>(): T | null {
+    return this.get<T>("user");
   },
 
-  setLanguage: (lang: "en" | "am"): void => {
-    localStorage.setItem("language", lang);
+  setUser(user: unknown): void {
+    this.set("user", user);
   },
 
-  clearAuth: (): void => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
+  getPermissions(): string[] {
+    return this.get<string[]>("permissions") || [];
+  },
+
+  setPermissions(permissions: string[]): void {
+    this.set("permissions", permissions);
+  },
+
+  getLanguage(): "en" | "am" {
+    const lang = localStorage.getItem(PREFIX + "language");
+    if (lang === "am") return "am";
+    return "en";
+  },
+
+  setLanguage(lang: "en" | "am"): void {
+    localStorage.setItem(PREFIX + "language", lang);
+  },
+
+  isAuthenticated(): boolean {
+    const token = this.getAccessToken();
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp > now;
+    } catch {
+      return false;
+    }
+  },
+
+  getTokenPayload(): Record<string, unknown> | null {
+    const token = this.getAccessToken();
+    if (!token) return null;
+    try {
+      return JSON.parse(atob(token.split(".")[1]));
+    } catch {
+      return null;
+    }
   },
 };
+
+export { storage };
+export default storage;
