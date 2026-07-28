@@ -1,0 +1,51 @@
+.gradient-bg-ethiopia {
+  background: linear-gradient(135deg, #009a44 0%, #fedd00 50%, #ef3340 100%);
+}
+
+.gradient-bg-dark {
+  background: linear-gradient(180deg, #0a0f0d 0%, #060a08 50%, #0a0f0d 100%);
+}
+
+.gradient-bg-card {
+  background: linear-gradient(135deg, rgba(15, 25, 20, 0.9), rgba(10, 15, 12, 0.95));
+}
+
+.gradient-text-fast {
+  background: linear-gradient(270deg, #009a44, #fedd00, #ef3340, #009a44);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientMoveFast 4s ease infinite;
+}
+
+@keyframes gradientMoveFast {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-border-bottom {
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #009a44, #fedd00, #ef3340) 1;
+}
+
+.gradient-overlay-bottom {
+  position: relative;
+}
+
+.gradient-overlay-bottom::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #009a44, #fedd00, #ef3340, transparent);
+}
