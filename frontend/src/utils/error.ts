@@ -288,3 +288,4 @@ export const DOCUMENT_TYPE_MAP: Record<
   medical_certificate: { en: "Medical Certificate", am: "የህክምና ሰርተፍኬት" },
   other: { en: "Other", am: "ሌላ" },
 };
+
