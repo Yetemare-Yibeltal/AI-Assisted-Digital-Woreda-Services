@@ -1,289 +1,290 @@
-export interface AppError {
-  status: number;
-  message: string;
-  code?: string;
-  details?: Record<string, string[]> | string[];
-  timestamp?: string;
-  originalError?: unknown;
-}
+export const APPLICATION_STATUSES = [
+  "pending",
+  "under_review",
+  "documents_requested",
+  "approved",
+  "rejected",
+  "completed",
+] as const;
 
-export interface ErrorHandlerOptions {
-  showToast?: boolean;
-  logToConsole?: boolean;
-  rethrow?: boolean;
-}
+export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
-export const parseError = (error: unknown): AppError => {
-  if (!error) {
-    return {
-      status: 500,
-      message: "An unknown error occurred",
-      code: "UNKNOWN_ERROR",
-    };
-  }
+export const PRIORITY_LEVELS = ["low", "medium", "high", "urgent"] as const;
+export type PriorityLevel = (typeof PRIORITY_LEVELS)[number];
 
-  if (typeof error === "object" && error !== null) {
-    const err = error as any;
+export const ADMIN_ROLES = [
+  "super_admin",
+  "admin",
+  "officer",
+  "viewer",
+] as const;
+export type AdminRole = (typeof ADMIN_ROLES)[number];
 
-    if (err.status && err.message) {
-      return {
-        status: err.status || 500,
-        message: err.message,
-        code: err.code || err.error?.code,
-        details: err.details || err.error?.details,
-        timestamp: err.timestamp,
-        originalError: err.originalError || error,
-      };
-    }
+export const SERVICE_CATEGORIES = [
+  "civil_registration",
+  "land_administration",
+  "business_licensing",
+  "tax_services",
+  "social_services",
+  "infrastructure",
+  "education",
+  "health",
+  "agriculture",
+  "legal_services",
+  "other",
+] as const;
 
-    if (err.response) {
-      const data = err.response.data;
-      return {
-        status: err.response.status || 500,
-        message:
-          data?.message ||
-          data?.error?.message ||
-          `Request failed with status ${err.response.status}`,
-        code: data?.error?.code || data?.code,
-        details: data?.error?.details || data?.details,
-        timestamp: data?.timestamp,
-        originalError: error,
-      };
-    }
+export type ServiceCategory = (typeof SERVICE_CATEGORIES)[number];
 
-    if (err instanceof Error) {
-      return {
-        status: 500,
-        message: err.message || "An unexpected error occurred",
-        code: "CLIENT_ERROR",
-        originalError: error,
-      };
-    }
+export const GENDER_OPTIONS = ["male", "female"] as const;
+export type GenderOption = (typeof GENDER_OPTIONS)[number];
 
-    if (err.data) {
-      return {
-        status: err.status || 500,
-        message: err.data?.message || err.message || "Request failed",
-        code: err.data?.error?.code || err.code,
-        details: err.data?.error?.details,
-        originalError: error,
-      };
-    }
-  }
+export const NOTIFICATION_PREFERENCES = ["sms", "email", "both"] as const;
+export type NotificationPreference = (typeof NOTIFICATION_PREFERENCES)[number];
 
-  if (error instanceof Error) {
-    return {
-      status: 500,
-      message: error.message || "An unexpected error occurred",
-      code: "CLIENT_ERROR",
-      originalError: error,
-    };
-  }
+export const LANGUAGES = ["en", "am"] as const;
+export type Language = (typeof LANGUAGES)[number];
 
-  if (typeof error === "string") {
-    return {
-      status: 500,
-      message: error,
-      code: "STRING_ERROR",
-    };
-  }
+export const DOCUMENT_TYPES = [
+  "birth_certificate",
+  "death_certificate",
+  "marriage_certificate",
+  "divorce_certificate",
+  "id_card",
+  "residence_permit",
+  "land_title_deed",
+  "business_license",
+  "tax_clearance",
+  "educational_transcript",
+  "medical_certificate",
+  "other",
+] as const;
 
-  return {
-    status: 500,
-    message: "An unexpected error occurred",
-    code: "UNKNOWN_ERROR",
-  };
+export type DocumentType = (typeof DOCUMENT_TYPES)[number];
+
+export const ETHIOPIAN_REGIONS = [
+  "Addis Ababa",
+  "Afar",
+  "Amhara",
+  "Benishangul-Gumuz",
+  "Dire Dawa",
+  "Gambela",
+  "Harari",
+  "Oromia",
+  "Sidama",
+  "Somali",
+  "South Ethiopia",
+  "South West Ethiopia",
+  "Tigray",
+  "Central Ethiopia",
+] as const;
+
+export type EthiopianRegion = (typeof ETHIOPIAN_REGIONS)[number];
+
+export const APPLICATION_STATUS_MAP: Record<
+  ApplicationStatus,
+  { en: string; am: string; color: string; bgColor: string; icon: string }
+> = {
+  pending: {
+    en: "Pending",
+    am: "በመጠባበቅ ላይ",
+    color: "text-yellow-400",
+    bgColor: "bg-yellow-500/20",
+    icon: "Clock",
+  },
+  under_review: {
+    en: "Under Review",
+    am: "በግምገማ ላይ",
+    color: "text-blue-400",
+    bgColor: "bg-blue-500/20",
+    icon: "Search",
+  },
+  documents_requested: {
+    en: "Documents Requested",
+    am: "ሰነዶች ተጠይቀዋል",
+    color: "text-orange-400",
+    bgColor: "bg-orange-500/20",
+    icon: "FileWarning",
+  },
+  approved: {
+    en: "Approved",
+    am: "ጸድቋል",
+    color: "text-green-400",
+    bgColor: "bg-green-500/20",
+    icon: "CheckCircle",
+  },
+  rejected: {
+    en: "Rejected",
+    am: "ውድቅ ተደርጓል",
+    color: "text-red-400",
+    bgColor: "bg-red-500/20",
+    icon: "XCircle",
+  },
+  completed: {
+    en: "Completed",
+    am: "ተጠናቋል",
+    color: "text-emerald-400",
+    bgColor: "bg-emerald-500/20",
+    icon: "CheckCircle2",
+  },
 };
 
-export const getErrorMessage = (
-  error: unknown,
-  fallback: string = "Something went wrong",
-): string => {
-  if (!error) return fallback;
-  const parsed = parseError(error);
-  return parsed.message || fallback;
+export const PRIORITY_MAP: Record<
+  PriorityLevel,
+  { en: string; am: string; color: string; bgColor: string }
+> = {
+  low: {
+    en: "Low",
+    am: "ዝቅተኛ",
+    color: "text-gray-400",
+    bgColor: "bg-gray-500/20",
+  },
+  medium: {
+    en: "Medium",
+    am: "መካከለኛ",
+    color: "text-blue-400",
+    bgColor: "bg-blue-500/20",
+  },
+  high: {
+    en: "High",
+    am: "ከፍተኛ",
+    color: "text-orange-400",
+    bgColor: "bg-orange-500/20",
+  },
+  urgent: {
+    en: "Urgent",
+    am: "አስቸኳይ",
+    color: "text-red-400",
+    bgColor: "bg-red-500/20",
+  },
 };
 
-export const getErrorCode = (error: unknown): string => {
-  return parseError(error).code || "UNKNOWN_ERROR";
+export const ADMIN_ROLE_MAP: Record<
+  AdminRole,
+  { en: string; am: string; color: string }
+> = {
+  super_admin: {
+    en: "Super Admin",
+    am: "ዋና አስተዳዳሪ",
+    color: "text-red-400",
+  },
+  admin: {
+    en: "Admin",
+    am: "አስተዳዳሪ",
+    color: "text-purple-400",
+  },
+  officer: {
+    en: "Officer",
+    am: "ባለስልጣን",
+    color: "text-blue-400",
+  },
+  viewer: {
+    en: "Viewer",
+    am: "ተመልካች",
+    color: "text-gray-400",
+  },
 };
 
-export const getErrorStatus = (error: unknown): number => {
-  return parseError(error).status;
+export const SERVICE_CATEGORY_MAP: Record<
+  ServiceCategory,
+  { en: string; am: string; icon: string }
+> = {
+  civil_registration: {
+    en: "Civil Registration",
+    am: "ሲቪል ምዝገባ",
+    icon: "Users",
+  },
+  land_administration: {
+    en: "Land Administration",
+    am: "የመሬት አስተዳደር",
+    icon: "MapPin",
+  },
+  business_licensing: {
+    en: "Business Licensing",
+    am: "የንግድ ፈቃድ",
+    icon: "Store",
+  },
+  tax_services: {
+    en: "Tax Services",
+    am: "የግብር አገልግሎት",
+    icon: "Receipt",
+  },
+  social_services: {
+    en: "Social Services",
+    am: "ማህበራዊ አገልግሎት",
+    icon: "Heart",
+  },
+  infrastructure: {
+    en: "Infrastructure",
+    am: "መሰረተ ልማት",
+    icon: "Building",
+  },
+  education: {
+    en: "Education",
+    am: "ትምህርት",
+    icon: "GraduationCap",
+  },
+  health: {
+    en: "Health",
+    am: "ጤና",
+    icon: "Activity",
+  },
+  agriculture: {
+    en: "Agriculture",
+    am: "ግብርና",
+    icon: "Leaf",
+  },
+  legal_services: {
+    en: "Legal Services",
+    am: "ህጋዊ አገልግሎት",
+    icon: "Scale",
+  },
+  other: {
+    en: "Other",
+    am: "ሌላ",
+    icon: "MoreHorizontal",
+  },
 };
 
-export const getFieldErrors = (error: unknown): Record<string, string> => {
-  const parsed = parseError(error);
-  if (!parsed.details) return {};
-
-  if (Array.isArray(parsed.details)) {
-    const fieldErrors: Record<string, string> = {};
-    parsed.details.forEach((detail: any) => {
-      if (detail.field && detail.message) {
-        const fieldName = detail.field
-          .replace("body.", "")
-          .replace("query.", "")
-          .replace("params.", "");
-        if (!fieldErrors[fieldName]) {
-          fieldErrors[fieldName] = detail.message;
-        }
-      }
-    });
-    return fieldErrors;
-  }
-
-  if (typeof parsed.details === "object") {
-    const result: Record<string, string> = {};
-    Object.entries(parsed.details as Record<string, string[]>).forEach(
-      ([key, messages]) => {
-        result[key] = Array.isArray(messages) ? messages[0] : String(messages);
-      },
-    );
-    return result;
-  }
-
-  return {};
+export const GENDER_MAP: Record<GenderOption, { en: string; am: string }> = {
+  male: { en: "Male", am: "ወንድ" },
+  female: { en: "Female", am: "ሴት" },
 };
 
-export const getFieldError = (
-  error: unknown,
-  fieldName: string,
-): string | null => {
-  const fieldErrors = getFieldErrors(error);
-  return fieldErrors[fieldName] || null;
+export const NOTIFICATION_PREFERENCE_MAP: Record<
+  NotificationPreference,
+  { en: string; am: string }
+> = {
+  sms: { en: "SMS", am: "ኤስኤምኤስ" },
+  email: { en: "Email", am: "ኢሜይል" },
+  both: { en: "Both", am: "ሁለቱም" },
 };
 
-export const isNetworkError = (error: unknown): boolean => {
-  const err = error as any;
-  if (!err) return false;
-  return (
-    err.message === "Network Error" ||
-    err.code === "ERR_NETWORK" ||
-    err.code === "ECONNABORTED" ||
-    (err.status === 0 && !err.response) ||
-    (err.originalError &&
-      !err.originalError.response &&
-      err.originalError.code === "ERR_NETWORK")
-  );
+export const LANGUAGE_MAP: Record<
+  Language,
+  { en: string; am: string; flag: string }
+> = {
+  en: { en: "English", am: "እንግሊዘኛ", flag: "🇬🇧" },
+  am: { en: "Amharic", am: "አማርኛ", flag: "🇪🇹" },
 };
 
-export const isServerError = (error: unknown): boolean => {
-  const status = getErrorStatus(error);
-  return status >= 500 && status < 600;
-};
-
-export const isClientError = (error: unknown): boolean => {
-  const status = getErrorStatus(error);
-  return status >= 400 && status < 500;
-};
-
-export const isAuthError = (error: unknown): boolean => {
-  return getErrorStatus(error) === 401;
-};
-
-export const isForbiddenError = (error: unknown): boolean => {
-  return getErrorStatus(error) === 403;
-};
-
-export const isNotFoundError = (error: unknown): boolean => {
-  return getErrorStatus(error) === 404;
-};
-
-export const isValidationError = (error: unknown): boolean => {
-  return getErrorStatus(error) === 422;
-};
-
-export const isRateLimitError = (error: unknown): boolean => {
-  return getErrorStatus(error) === 429;
-};
-
-export const isConflictError = (error: unknown): boolean => {
-  return getErrorStatus(error) === 409;
-};
-
-export const handleError = (
-  error: unknown,
-  options: ErrorHandlerOptions = {},
-): AppError => {
-  const { showToast = true, logToConsole = true, rethrow = false } = options;
-
-  const appError = parseError(error);
-
-  if (logToConsole) {
-    if (appError.status >= 500) {
-      console.error(
-        `[ERROR ${appError.status}]`,
-        appError.message,
-        appError.originalError || "",
-      );
-    } else if (appError.status >= 400) {
-      console.warn(`[WARN ${appError.status}]`, appError.message);
-    } else {
-      console.error("[ERROR]", appError.message, appError.originalError || "");
-    }
-  }
-
-  if (showToast && !isAuthError(error) && !isForbiddenError(error)) {
-    import("sonner")
-      .then(({ toast }) => {
-        if (isNetworkError(error)) {
-          toast.error("Network error. Please check your internet connection.");
-        } else if (isServerError(error)) {
-          toast.error("Server error. Please try again later.");
-        } else if (isValidationError(error)) {
-          toast.error(appError.message);
-        } else if (isRateLimitError(error)) {
-          toast.error("Too many requests. Please wait and try again.");
-        } else {
-          toast.error(appError.message);
-        }
-      })
-      .catch(() => {
-        alert(appError.message);
-      });
-  }
-
-  if (rethrow) {
-    throw appError;
-  }
-
-  return appError;
-};
-
-export const silentError = (error: unknown): AppError => {
-  return handleError(error, {
-    showToast: false,
-    logToConsole: true,
-    rethrow: false,
-  });
-};
-
-export const formatErrorForDisplay = (error: unknown): string => {
-  const parsed = parseError(error);
-
-  if (isNetworkError(error)) {
-    return "Unable to connect to the server. Please check your internet connection and try again.";
-  }
-
-  if (isServerError(error)) {
-    return "The server encountered an error. Our team has been notified. Please try again later.";
-  }
-
-  if (isAuthError(error)) {
-    return "Your session has expired. Please log in again to continue.";
-  }
-
-  if (isForbiddenError(error)) {
-    return "You don't have permission to perform this action. Please contact your administrator.";
-  }
-
-  if (isNotFoundError(error)) {
-    return "The requested resource was not found. It may have been moved or deleted.";
-  }
-
-  if (isRateLimitError(error)) {
-    return "You've made too many requests. Please wait a moment and try again.";
-  }
-
-  return parsed.message;
+export const DOCUMENT_TYPE_MAP: Record<
+  DocumentType,
+  { en: string; am: string }
+> = {
+  birth_certificate: { en: "Birth Certificate", am: "የልደት ሰርተፍኬት" },
+  death_certificate: { en: "Death Certificate", am: "የሞት ሰርተፍኬት" },
+  marriage_certificate: { en: "Marriage Certificate", am: "የጋብቻ ሰርተፍኬት" },
+  divorce_certificate: { en: "Divorce Certificate", am: "የፍቺ ሰርተፍኬት" },
+  id_card: { en: "ID Card", am: "መታወቂያ ካርድ" },
+  residence_permit: { en: "Residence Permit", am: "የመኖሪያ ፈቃድ" },
+  land_title_deed: { en: "Land Title Deed", am: "የመሬት ይዞታ ማረጋገጫ" },
+  business_license: { en: "Business License", am: "የንግድ ፈቃድ" },
+  tax_clearance: { en: "Tax Clearance", am: "የግብር ክሊራንስ" },
+  educational_transcript: {
+    en: "Educational Transcript",
+    am: "የትምህርት ትራንስክሪፕት",
+  },
+  medical_certificate: { en: "Medical Certificate", am: "የህክምና ሰርተፍኬት" },
+  other: { en: "Other", am: "ሌላ" },
 };
