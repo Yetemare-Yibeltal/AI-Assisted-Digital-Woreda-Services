@@ -1,6 +1,5 @@
 import Service, { IService } from "../models/Service";
 import { NotFoundError } from "../errors/NotFoundError";
-import { ValidationError } from "../errors/ValidationError";
 import { AppError } from "../errors/AppError";
 import { generateSlug } from "../utils/generateId";
 import { buildPaginationOptions, buildSearchQuery } from "../utils/pagination";
@@ -48,7 +47,12 @@ const getAllServices = async (queryParams: any) => {
     Service.countDocuments(finalFilter),
   ]);
 
-  return { services, totalItems, page: params.page, limit: params.limit };
+  return {
+    services: services as unknown as IService[],
+    totalItems,
+    page: params.page,
+    limit: params.limit,
+  };
 };
 
 const getServiceById = async (id: string): Promise<IService> => {
@@ -133,7 +137,7 @@ const getPopularServices = async (limit: number = 8): Promise<IService[]> => {
     .limit(limit)
     .select("name nameAmharic slug shortDescription shortDescriptionAmharic icon category")
     .lean();
-  return services;
+  return services as unknown as IService[];
 };
 
 const getServicesByCategory = async (category: string): Promise<IService[]> => {
@@ -141,7 +145,7 @@ const getServicesByCategory = async (category: string): Promise<IService[]> => {
     .sort({ order: 1, name: 1 })
     .select("name nameAmharic slug shortDescription shortDescriptionAmharic icon fees")
     .lean();
-  return services;
+  return services as unknown as IService[];
 };
 
 const searchServices = async (query: string, limit: number = 20): Promise<IService[]> => {
@@ -160,7 +164,7 @@ const searchServices = async (query: string, limit: number = 20): Promise<IServi
     .limit(limit)
     .select("name nameAmharic slug shortDescription shortDescriptionAmharic icon category")
     .lean();
-  return services;
+  return services as unknown as IService[];
 };
 
 const getServiceCategories = async (): Promise<string[]> => {
