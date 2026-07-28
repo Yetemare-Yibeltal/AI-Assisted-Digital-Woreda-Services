@@ -94,7 +94,7 @@ const bulkCreateCounters = async (
 
 const getAllCounters = async (): Promise<ICounter[]> => {
   const counters = await Counter.find().sort({ name: 1 }).lean();
-  return counters;
+  return counters as unknown as ICounter[];
 };
 
 const deleteCounter = async (counterName: string): Promise<void> => {
