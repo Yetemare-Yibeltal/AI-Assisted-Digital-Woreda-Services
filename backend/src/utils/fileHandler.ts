@@ -1,0 +1,1 @@
+import fs from "fs";import path from "path";export const deleteFile = (filePath: string) => { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); };export const ensureDir = (dirPath: string) => { if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true }); };

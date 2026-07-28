@@ -1,0 +1,1 @@
+import eventEmitter from './eventEmitter';export const NOTIFICATION_CREATED = 'notification:created';export const emitNotificationCreated = (data: any) => eventEmitter.emit(NOTIFICATION_CREATED, data);

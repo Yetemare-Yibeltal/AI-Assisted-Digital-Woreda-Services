@@ -1,0 +1,1 @@
+export { sendMessage, clearSession, getSessionHistory, getDetailedRecommendations } from '../ai/chatService';export { getRecommendations, getServiceRecommendationsByCategory } from '../ai/recommendationService';export { translate, translateBatch, translateServiceInfo } from '../ai/translationService';

@@ -1,0 +1,1 @@
+import { Request, Response, NextFunction } from 'express';export const aiCache = (duration: number = 600) => { return (req: Request, res: Response, next: NextFunction) => { res.set('X-AI-Cache-TTL', String(duration)); next(); }; };

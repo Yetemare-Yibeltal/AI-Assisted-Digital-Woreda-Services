@@ -1,0 +1,1 @@
+import { Request, Response, NextFunction } from 'express';const cacheMiddleware = (duration: number = 300) => { return (req: Request, res: Response, next: NextFunction) => { res.set('Cache-Control', 'public, max-age=' + duration); next(); }; };export default cacheMiddleware;

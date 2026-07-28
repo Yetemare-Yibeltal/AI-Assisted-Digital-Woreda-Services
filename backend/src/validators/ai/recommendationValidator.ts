@@ -1,0 +1,1 @@
+import Joi from 'joi';export const recommendationSchema = Joi.object({ query: Joi.string().min(1).max(1000).required(), language: Joi.string().valid('en', 'am').optional(), maxResults: Joi.number().integer().min(1).max(10).default(5) });

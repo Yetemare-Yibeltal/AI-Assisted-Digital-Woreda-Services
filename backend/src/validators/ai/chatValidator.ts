@@ -1,0 +1,1 @@
+import Joi from 'joi';export const chatMessageSchema = Joi.object({ sessionId: Joi.string().max(100).optional(), message: Joi.string().min(1).max(2000).required(), language: Joi.string().valid('en', 'am').optional() });
