@@ -40,7 +40,6 @@ const addHeader = (doc: PDFKit.PDFDocument, language: "en" | "am"): void => {
   doc.fontSize(10).text(subHeaderText, { align: "center" });
   doc.moveDown(0.5);
 
-  // Horizontal line
   doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#1a5632");
   doc.moveDown(1);
 };
@@ -74,7 +73,6 @@ const generateApplicationReceipt = async (
   doc.fontSize(16).text(title, { align: "center" });
   doc.moveDown(1);
 
-  // Application details table
   const details =
     options.language === "am"
       ? [
@@ -131,7 +129,6 @@ const generateApplicationReceipt = async (
 
   doc.moveDown(2);
 
-  // Fees section
   if (service.fees && service.fees.length > 0) {
     const feesTitle = options.language === "am" ? "ክፍያዎች" : "Fees";
     doc.fontSize(12).font("Helvetica-Bold").text(feesTitle);
@@ -154,7 +151,6 @@ const generateApplicationReceipt = async (
 
   doc.moveDown(2);
 
-  // Important notice
   const notice =
     options.language === "am"
       ? "ይህ ደረሰኝ ማመልከቻዎ መቀበሉን የሚያረጋግጥ ነው። ለወደፊት ማጣቀሻ ይዘውት ይቆዩ።"
@@ -197,7 +193,6 @@ const generateApprovalCertificate = async (
   doc.fontSize(11).text(bodyText, { align: "justify" });
   doc.moveDown(3);
 
-  // Signature area
   doc.fontSize(10).text(`Approved by: ${approvedBy}`);
   doc.text(`Date: ${new Date().toLocaleDateString()}`);
   doc.moveDown(1);
@@ -253,8 +248,8 @@ const generateDocumentRequestLetter = async (
   doc.text(bodyIntro);
   doc.moveDown(0.5);
 
-  requestedDocuments.forEach((doc, index) => {
-    doc.text(`${index + 1}. ${doc}`, { indent: 30 });
+  requestedDocuments.forEach((documentName: string, index: number) => {
+    doc.text(`${index + 1}. ${documentName}`, { indent: 30 });
   });
 
   doc.moveDown(2);

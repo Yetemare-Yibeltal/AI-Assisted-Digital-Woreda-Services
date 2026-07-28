@@ -134,7 +134,7 @@ const getAuditStats = async (
     byAction: formatGrouped(byAction),
     byResource: formatGrouped(byResource),
     byStatus: formatGrouped(byStatus),
-    topUsers: topUsers.map((u) => ({
+    topUsers: topUsers.map((u: { _id: { userId: string; userEmail: string }; count: number }) => ({
       userId: u._id.userId,
       userEmail: u._id.userEmail,
       count: u.count,
