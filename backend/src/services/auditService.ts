@@ -68,7 +68,12 @@ const getAuditLogs = async (queryParams: any) => {
     AuditLog.countDocuments(finalFilter),
   ]);
 
-  return { logs, totalItems, page: params.page, limit: params.limit };
+  return {
+    logs: logs as unknown as IAuditLog[],
+    totalItems,
+    page: params.page,
+    limit: params.limit,
+  };
 };
 
 const getAuditLogById = async (id: string): Promise<IAuditLog> => {
@@ -76,7 +81,7 @@ const getAuditLogById = async (id: string): Promise<IAuditLog> => {
   if (!log) {
     throw new Error("Audit log not found");
   }
-  return log;
+  return log as unknown as IAuditLog;
 };
 
 const getUserAuditLogs = async (userId: string, queryParams: any) => {
