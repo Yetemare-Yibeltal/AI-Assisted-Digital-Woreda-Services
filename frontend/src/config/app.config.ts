@@ -1,83 +1,121 @@
-export const appConfig = {
-  name: import.meta.env.VITE_APP_NAME || "Dangila Digital Woreda Services",
-  shortName: "Dangila Woreda",
-  version: "1.0.0",
-  description:
-    "AI-Assisted Digital Woreda Services for Dangila, Amhara Region, Ethiopia",
-  url: import.meta.env.VITE_APP_URL || "http://localhost:5173",
+const BASE = "/api/v1";
 
-  woreda: {
-    name: "Dangila",
-    nameAmharic: "ዳንግላ",
-    region: "Amhara",
-    regionAmharic: "አማራ",
-    zone: "Awi",
-    zoneAmharic: "አዊ",
-    country: "Ethiopia",
-    countryAmharic: "ኢትዮጵያ",
+export const apiEndpoints = {
+  // Health
+  health: "/health",
+  root: BASE,
+
+  // Public
+  public: {
+    services: `${BASE}/public/services`,
+    popularServices: `${BASE}/public/services/popular`,
+    serviceCategories: `${BASE}/public/services/categories`,
+    searchServices: `${BASE}/public/services/search`,
+    serviceBySlug: (slug: string) => `${BASE}/public/services/slug/${slug}`,
+    submitApplication: `${BASE}/public/applications`,
+    trackApplication: (trackingNumber: string) =>
+      `${BASE}/public/applications/track/${trackingNumber}`,
   },
 
-  features: {
-    aiChat: import.meta.env.VITE_AI_ENABLED === "true",
-    aiRecommendations: import.meta.env.VITE_AI_ENABLED === "true",
-    aiTranslation: import.meta.env.VITE_AI_ENABLED === "true",
-    voiceInput: false,
-    darkMode: true,
-    notifications: true,
-    pdfGeneration: true,
-    multiLanguage: true,
+  // Auth
+  auth: {
+    login: `${BASE}/auth/login`,
+    refreshToken: `${BASE}/auth/refresh-token`,
+    forgotPassword: `${BASE}/auth/forgot-password`,
+    resetPassword: `${BASE}/auth/reset-password`,
+    logout: `${BASE}/auth/logout`,
+    me: `${BASE}/auth/me`,
   },
 
-  language: {
-    default: "en" as const,
-    supported: ["en", "am"] as const,
-    fallback: "en" as const,
-    direction: "ltr" as const,
+  // Services (Admin)
+  services: {
+    list: `${BASE}/services`,
+    byId: (id: string) => `${BASE}/services/${id}`,
+    bySlug: (slug: string) => `${BASE}/services/slug/${slug}`,
+    create: `${BASE}/services`,
+    update: (id: string) => `${BASE}/services/${id}`,
+    delete: (id: string) => `${BASE}/services/${id}`,
+    toggleStatus: (id: string) => `${BASE}/services/${id}/toggle`,
+    popular: `${BASE}/services/popular`,
+    categories: `${BASE}/services/categories`,
+    search: `${BASE}/services/search`,
+    byCategory: (category: string) => `${BASE}/services/category/${category}`,
+    bulkUpdate: `${BASE}/services/bulk-update`,
   },
 
-  pagination: {
-    defaultPageSize: 12,
-    pageSizeOptions: [6, 12, 24, 48],
-    maxPageSize: 100,
+  // Applications
+  applications: {
+    list: `${BASE}/applications`,
+    stats: `${BASE}/applications/stats`,
+    byId: (id: string) => `${BASE}/applications/${id}`,
+    byTrackingNumber: (trackingNumber: string) =>
+      `${BASE}/applications/tracking/${trackingNumber}`,
+    create: `${BASE}/applications`,
+    updateStatus: (id: string) => `${BASE}/applications/${id}/status`,
+    assign: (id: string) => `${BASE}/applications/${id}/assign`,
+    updatePriority: (id: string) => `${BASE}/applications/${id}/priority`,
+    addDocument: (id: string) => `${BASE}/applications/${id}/documents`,
+    verifyDocument: (id: string, documentId: string) =>
+      `${BASE}/applications/${id}/documents/${documentId}/verify`,
+    delete: (id: string) => `${BASE}/applications/${id}`,
   },
 
-  date: {
-    format: "MMM D, YYYY",
-    formatShort: "MM/DD/YYYY",
-    formatTime: "h:mm A",
-    formatDateTime: "MMM D, YYYY h:mm A",
-    timezone: "Africa/Addis_Ababa",
+  // Admin
+  admin: {
+    list: `${BASE}/admin`,
+    byId: (id: string) => `${BASE}/admin/${id}`,
+    create: `${BASE}/admin`,
+    update: (id: string) => `${BASE}/admin/${id}`,
+    delete: (id: string) => `${BASE}/admin/${id}`,
+    toggleStatus: (id: string) => `${BASE}/admin/${id}/toggle-status`,
+    changePassword: (id: string) => `${BASE}/admin/${id}/change-password`,
+    permissions: (id: string) => `${BASE}/admin/${id}/permissions`,
+    unlock: (id: string) => `${BASE}/admin/${id}/unlock`,
+    byDepartment: (department: string) =>
+      `${BASE}/admin/department/${department}`,
   },
 
-  currency: {
-    code: "ETB",
-    symbol: "Br",
-    locale: "en-ET",
+  // Dashboard
+  dashboard: {
+    overview: `${BASE}/dashboard/overview`,
+    statusDistribution: `${BASE}/dashboard/status-distribution`,
+    trends: `${BASE}/dashboard/trends`,
+    servicePerformance: `${BASE}/dashboard/service-performance`,
+    officerWorkload: `${BASE}/dashboard/officer-workload`,
+    processingTimes: `${BASE}/dashboard/processing-times`,
+    citizenDemographics: `${BASE}/dashboard/citizen-demographics`,
+    revenue: `${BASE}/dashboard/revenue`,
+    deadlines: `${BASE}/dashboard/deadlines`,
+    recentActivity: `${BASE}/dashboard/recent-activity`,
+    peakAnalysis: `${BASE}/dashboard/peak-analysis`,
+    export: `${BASE}/dashboard/export`,
   },
 
-  upload: {
-    maxFileSize: 5 * 1024 * 1024,
-    allowedImageTypes: ["image/jpeg", "image/png", "image/webp"],
-    allowedDocumentTypes: [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ],
-    maxFiles: 5,
+  // PDF
+  pdf: {
+    receipt: (id: string) => `${BASE}/pdf/receipt/${id}`,
+    certificate: (id: string) => `${BASE}/pdf/certificate/${id}`,
+    documentRequest: (id: string) => `${BASE}/pdf/document-request/${id}`,
   },
 
-  session: {
-    tokenRefreshMargin: 5 * 60 * 1000,
-    idleTimeout: 30 * 60 * 1000,
-  },
-
-  animation: {
-    pageTransition: true,
-    reducedMotion: false,
-    threeBackground: true,
+  // AI
+  ai: {
+    status: `${BASE}/ai/status`,
+    chat: {
+      sendMessage: `${BASE}/ai/chat/message`,
+      quickRecommendations: `${BASE}/ai/chat/recommendations`,
+      suggestedQuestions: `${BASE}/ai/chat/suggested-questions`,
+      session: (sessionId: string) => `${BASE}/ai/chat/session/${sessionId}`,
+    },
+    recommendations: {
+      get: `${BASE}/ai/recommendations`,
+      compare: `${BASE}/ai/recommendations/compare`,
+      popular: `${BASE}/ai/recommendations/popular`,
+      byCategory: (category: string) =>
+        `${BASE}/ai/recommendations/category/${category}`,
+    },
   },
 } as const;
 
-export type AppConfig = typeof appConfig;
-export default appConfig;
+export type ApiEndpoints = typeof apiEndpoints;
+export default apiEndpoints;
