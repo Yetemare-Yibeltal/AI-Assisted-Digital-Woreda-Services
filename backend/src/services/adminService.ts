@@ -1,6 +1,5 @@
 import Admin, { IAdmin, IAdminPermissions } from "../models/Admin";
 import { NotFoundError } from "../errors/NotFoundError";
-import { ValidationError } from "../errors/ValidationError";
 import { AppError } from "../errors/AppError";
 import { AuthorizationError } from "../errors/AuthorizationError";
 import { AuthenticationError } from "../errors/AuthenticationError";
@@ -9,7 +8,6 @@ import {
   buildPaginationOptions,
   buildSearchQuery,
 } from "../utils/pagination";
-import { generateEmployeeId } from "../utils/generateId";
 
 const getAllAdmins = async (queryParams: any) => {
   const params = extractPaginationParams(queryParams);
@@ -45,7 +43,12 @@ const getAllAdmins = async (queryParams: any) => {
     Admin.countDocuments(finalFilter),
   ]);
 
-  return { admins, totalItems, page: params.page, limit: params.limit };
+  return {
+    admins: admins as unknown as IAdmin[],
+    totalItems,
+    page: params.page,
+    limit: params.limit,
+  };
 };
 
 const getAdminById = async (id: string): Promise<IAdmin> => {
@@ -241,7 +244,7 @@ const getAdminsByDepartment = async (department: string): Promise<IAdmin[]> => {
     .select("fullName email phoneNumber role position")
     .lean();
 
-  return admins;
+  return admins as unknown as IAdmin[];
 };
 
 export {
