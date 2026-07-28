@@ -1,0 +1,73 @@
+.three-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.three-container canvas {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.three-overlay {
+  position: relative;
+  z-index: 1;
+}
+
+.three-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  color: #009a44;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.three-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 154, 68, 0.2);
+  border-top-color: #009a44;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.three-error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  color: #ef3340;
+  text-align: center;
+}
+
+.three-fade-in {
+  opacity: 0;
+  animation: threeFadeIn 2s ease-out forwards;
+}
+
+@keyframes threeFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
