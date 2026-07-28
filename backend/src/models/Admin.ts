@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import config from "../config/index";
 
 export interface IAdminPermissions {
@@ -204,27 +204,22 @@ AdminSchema.methods.comparePassword = async function (candidatePassword: string)
 
 // Generate access token
 AdminSchema.methods.generateAuthToken = function (): string {
-  const signOptions: SignOptions = {
-    expiresIn: config.jwt.expiresIn,
+  const payload = {
+    id: this._id,
+    email: this.email,
+    role: this.role,
+    fullName: this.fullName,
   };
-  return jwt.sign(
-    {
-      id: this._id,
-      email: this.email,
-      role: this.role,
-      fullName: this.fullName,
-    },
-    config.jwt.secret,
-    signOptions
-  );
+  return jwt.sign(payload, config.jwt.secret, {
+    expiresIn: "7d",
+  } as jwt.SignOptions);
 };
 
 // Generate refresh token
 AdminSchema.methods.generateRefreshToken = function (): string {
-  const signOptions: SignOptions = {
-    expiresIn: config.jwt.refreshExpiresIn,
-  };
-  return jwt.sign({ id: this._id }, config.jwt.secret, signOptions);
+  return jwt.sign({ id: this._id }, config.jwt.secret, {
+    expiresIn: "30d",
+  } as jwt.SignOptions);
 };
 
 // Check specific permission
