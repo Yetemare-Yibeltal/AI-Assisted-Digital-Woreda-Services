@@ -1,1 +1,2 @@
-import logger from '../utils/logger';export default logger;
+import logger from "../utils/logger";
+export default logger;
