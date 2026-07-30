@@ -1,1 +1,2 @@
-import compression from 'compression';export default compression();
+import compression from "compression";
+export default compression();
