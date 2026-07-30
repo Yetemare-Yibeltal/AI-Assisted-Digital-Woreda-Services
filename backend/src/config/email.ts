@@ -1,15 +1,4 @@
-interface EmailConfig {
-  host: string;
-  port: number;
-  secure: boolean;
-  auth: {
-    user: string;
-    pass: string;
-  };
-  from: string;
-}
-
-const emailConfig: EmailConfig = {
+const emailConfig = {
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: parseInt(process.env.SMTP_PORT || "587", 10),
   secure: process.env.SMTP_SECURE === "true",
