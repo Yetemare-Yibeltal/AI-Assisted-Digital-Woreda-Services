@@ -1,9 +1,9 @@
-export * from "./chatService";
-export * from "./recommendationService";
-export * from "./translationService";
-export * from "./analyticsService";
-export * from "./documentService";
-export * from "./embeddingService";
-export * from "./modelService";
-export * from "./promptService";
-export * from "./voiceService";
+export { sendMessage, clearSession, getSessionHistory } from "./chatService";
+export { getRecommendations, getServiceRecommendationsByCategory } from "./recommendationService";
+export { translate, translateBatch, translateServiceInfo } from "./translationService";
+export { logUsage, getAnalytics } from "./analyticsService";
+export { scanDocument, verifyDocument } from "./documentService";
+export { generateEmbedding, cosineSimilarity } from "./embeddingService";
+export { getModelInfo, listModels } from "./modelService";
+export { buildPrompt, getSystemPrompt } from "./promptService";
+export { processVoice, isVoiceSupported } from "./voiceService";
