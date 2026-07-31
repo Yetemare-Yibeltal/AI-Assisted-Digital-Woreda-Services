@@ -58,7 +58,7 @@ export const generatePDF = async (content: PDFContent, outputPath?: string): Pro
     // Footer
     if (content.footer) {
       doc.moveDown(2);
-      doc.fontSize(8).text(content.footer, { align: "center", color: "#888" });
+      doc.fillColor("#888").fontSize(8).text(content.footer, { align: "center" });
     }
 
     doc.end();
