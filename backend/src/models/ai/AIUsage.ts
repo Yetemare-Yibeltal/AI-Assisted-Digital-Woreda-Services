@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IAIUsage extends Document {
   userId: string;
   feature: string;
-  model: string;
+  aiModel: string;
   promptTokens: number;
   completionTokens: number;
   responseTime: number;
@@ -15,7 +15,7 @@ export interface IAIUsage extends Document {
 const AIUsageSchema = new Schema<IAIUsage>({
   userId: { type: String, required: true, index: true },
   feature: { type: String, required: true },
-  model: { type: String, default: "gemini-1.5-flash" },
+  aiModel: { type: String, default: "gemini-1.5-flash" },
   promptTokens: { type: Number, default: 0 },
   completionTokens: { type: Number, default: 0 },
   responseTime: { type: Number, default: 0 },
